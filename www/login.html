@@ -30,7 +30,7 @@
                 * Enable inline JS: add 'unsafe-inline' to default-src
         -->
         <!-- cordova-headers -->
-        <meta http-equiv="Content-Security-Policy" content="default-src https://code.jquery.com https://fonts.gstatic.com http://localhost:5000 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src https://fonts.googleapis.com 'self' 'unsafe-inline'; media-src *; img-src 'self' data: content:;">
+        <meta http-equiv="Content-Security-Policy" content="default-src https://code.jquery.com https://apilergens.herokuapp.com https://fonts.gstatic.com http://localhost:5000 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src https://fonts.googleapis.com 'self' 'unsafe-inline'; media-src *; img-src 'self' data: content:;">
 
         <meta name="format-detection" content="telephone=no">
         <meta name="msapplication-tap-highlight" content="no">
@@ -66,7 +66,7 @@
                     <h1>Entrar</h1>
                     <input type="email" placeholder="Email" id="logEmail"/>
                     <input type="password" placeholder="Contraseña" id="logPassword"/>
-                    <button>Entrar</button>
+                    <button id="loginButton">Entrar</button>
                 </div>
             </div>
             <div class="overlay-container">
