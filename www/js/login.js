@@ -59,7 +59,7 @@ function logApiCall(logEmail, logPass){
             }
         }
       }).done(function (msg) {
-          alert("LOGIN correctamente");
+          location.href="menu.html#home";
       }).fail(function (data) {
           alert("No se ha encontrado el usuario");
       });

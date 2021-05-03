@@ -1,0 +1,44 @@
+.navbar {
+    background-color: #ff464e;
+    overflow: hidden;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    padding: 20px;
+  }
+  
+  /* Style the links inside the navigation bar */
+  .navbar a {
+    float: left;
+    display: block;
+    color: #000000;
+    text-align: center;
+    padding: 20px;
+    text-decoration: none;
+    font-size: 40px;
+    width: 45%;
+  }
+  
+  /* Change the color of links on hover */
+  .navbar a:hover {
+    background-color: #ddd;
+    color: black;
+  }
+  
+  /* Add a color to the active/current link */
+  .navbar a.active {
+    background-color: #ffffff;
+    color: rgb(0, 0, 0);
+  }
+
+  button {
+    width: 25%;
+    padding: 10px;
+    font-size: 40px;
+  }
+
+  input {
+    width: 72%;
+    padding: 10px;
+    font-size: 40px;
+  }
