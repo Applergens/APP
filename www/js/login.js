@@ -51,15 +51,21 @@ function logApiCall(logEmail, logPass){
     console.log(logEmail+"          "+logPass);
     $.ajax({
         method: "POST",
-        url: herokuUrl+"/login",
+        url: herokuUrl+"/login/user",
         data:{
             "user" :{
-                "email" : '"'+logEmail+'"',
-                "password" : '"'+logPass+'"'
+                "email" : logEmail,
+                "password" : logPass
             }
         }
       }).done(function (msg) {
-          location.href="menu.html#home";
+          if(msg != 'Invalid credentials'){
+            usernameFunction(msg.name);
+            location.href="menu.html#home";
+          } else {
+              alert('Usuario o contraseña incorrectos');
+          }
+          
       }).fail(function (data) {
           alert("No se ha encontrado el usuario");
       });
@@ -68,7 +74,7 @@ function logApiCall(logEmail, logPass){
 function regApiCall(user){
     $.ajax({
         method: "POST",
-        url: herokuUrl+"/register",
+        url: herokuUrl+"/register/user",
         data:{
             "user" : {
                 "name": user.name,
@@ -89,7 +95,13 @@ function regApiCall(user){
         }
       }).done(function (msg) {
           alert("REGISTER correcto");
+          usernameFunction(user.name);
+          location.href="menu.html#home";
       }).fail(function (data) {
           console.log(data);
       });
+}
+
+function usernameFunction(userName){
+    localStorage.setItem('name', userName);
 }

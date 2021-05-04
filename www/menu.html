@@ -44,16 +44,17 @@
         <title>Menu Page</title>
     </head>
     <body>
-        <div id="homeTab">
+        <header id="nameHeader" class="topnav">
+        </header>
+        <div id="homeTab" class="maintab">
             <div>
                 <input type="text" id="srcInput" placeholder="Buscar restaurante por codigo...">
                 <button id="srcBtn">BUSCAR</button>
             </div>
-            <div>
-                
-            </div>
+            <div id="restaurantSearchDiv" class="maintab"></div>
+            <div class="favouritesDiv">AAAAAA</div>
         </div>
-        <div id="profileTab">
+        <div id="profileTab" class="maintab">
             <button>BOTON</button>
         </div>
         <nav>
@@ -66,7 +67,6 @@
 
         <!--  Scripts-->
         <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-        <script src="cordova.js"></script>
         <script src="js/menu.js"></script>
     </body>
 </html>

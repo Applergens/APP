@@ -18,18 +18,21 @@ body {
 h1 {
 	font-weight: bold;
 	margin: 0;
+	font-size: 50px;
 }
 
 .registerH1Padding {
     padding-top: 60px;
+	font-size: 50px;
 }
 
 h2 {
 	text-align: center;
+	font-size: 60px;
 }
 
 p {
-	font-size: 14px;
+	font-size: 35px;
 	font-weight: 100;
 	line-height: 20px;
 	letter-spacing: 0.5px;
@@ -52,7 +55,7 @@ button {
 	border: 1px solid #FF4B2B;
 	background-color: #FF4B2B;
 	color: #FFFFFF;
-	font-size: 12px;
+	font-size: 30px;
 	font-weight: bold;
 	padding: 12px 45px;
 	letter-spacing: 1px;
@@ -88,8 +91,9 @@ input {
 	background-color: #eee;
 	border: none;
 	padding: 12px 15px;
-	margin: 8px 0;
+	margin: 8px;
 	width: 100%;
+	font-size: 45px;
 }
 
 .container {
@@ -100,8 +104,8 @@ input {
 	position: relative;
 	overflow: hidden;
 	width: 768px;
-	max-width: 100%;
-	min-height: 480px;
+	width: 100%;
+	height: 60%;
 }
 
 .form-container {
