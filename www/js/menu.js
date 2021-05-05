@@ -65,7 +65,9 @@ function srcRestaurant(){
 function fullAcordion(restaurant){
     var resName = restaurant.name;
     var name = resName.toUpperCase();
-    $('#restaurantSearchDiv').append("<button id='acordion' class='accordion'>"+name+"</button><div id='acordionPanel' class='panel'><p><strong>Calle: </strong>"+restaurant.address+"</p><p><strong>Telefono: </strong>"+restaurant.phone+"</p></div>");
+    $('#restaurantSearchDiv').append("<button id='acordion' class='accordion'>"+name+"</button><div id='acordionPanel' class='panel'><p><strong>Calle: </strong>"+restaurant.address+"</p><p><strong>Telefono: </strong>"+restaurant.phone+"</p><button id='seeDishes'>Ver carta</button></div>");
+
+    $('#seeDishes').on("click", seeDishesFunc(restaurant));
 
     $('#acordion').on("click",function() {
         /* Toggle between adding and removing the "active" class,
@@ -74,13 +76,18 @@ function fullAcordion(restaurant){
 
         var panel=$(this).next(".panel");
 			
-        if(panel.css("display")=="none"){ //open		
+        // Open accordion
+        if(panel.css("display")=="none"){		
             panel.slideDown(250);			
             $(this).addClass("open");
         }
-        else{ //close		
+        else{ // Close accordion
             panel.slideUp(250);
             $(this).removeClass("open");	
         }
     });
+}
+
+function seeDishesFunc(restaurant){
+    
 }

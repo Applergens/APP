@@ -108,5 +108,8 @@ p {
 .favouritesDiv {
   width: 100%;
   padding: 20px;
+  height: 76vh;
+  overflow-x: hidden;
+  overflow-y: auto;
   background-color: green;
 }
