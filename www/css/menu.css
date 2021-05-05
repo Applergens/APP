@@ -3,9 +3,10 @@
     background-color: #ff464e;
     overflow: hidden;
     position: fixed;
+    display: block;
     bottom: 0;
     width: 100%;
-    padding: 20px;
+    padding: 10px;
   }
   
   /* Style the links inside the navigation bar */
@@ -14,10 +15,10 @@
     display: block;
     color: #000000;
     text-align: center;
-    padding: 20px;
+    padding: 5px;
     text-decoration: none;
-    font-size: 50px;
-    width: 45%;
+    font-size: 20px;
+    width: 40%;
   }
   
   /* Change the color of links on hover */
@@ -32,27 +33,29 @@
     color: rgb(0, 0, 0);
   }
 
-  /* Boton y inputd de buscar restaurantes */
+  /* Boton y input de buscar restaurantes */
   button {
-    width: 25%;
-    padding: 10px;
-    font-size: 50px;
+    width: 16%;
+    height: 40px;
+    padding: 2px;
+    font-size: 20px;
   }
 
   input {
-    width: 72%;
-    padding: 10px;
-    font-size: 47px;
+    width: 80%;
+    height: 40px;
+    padding: 2px;
+    font-size: 20px;
   }
 
   /* Mensaje saludo header*/
   .topnav {
     display: block;
-    background-color: rgb(255, 230, 184);
+    background-color: #ff464e;;
     width: 100%;
     overflow: hidden;
     padding: 10px;
-    font-size: 60px;
+    font-size: 40px;
     text-align: center;
   }
 
@@ -64,9 +67,8 @@
   /* Style the buttons that are used to open and close the accordion panel */
 .accordion {
   background-color: #eee;
-  color: #444;
   cursor: pointer;
-  padding: 18px;
+  padding: 10px;
   width: 100%;
   text-align: left;
   border: none;
@@ -81,14 +83,14 @@
 
 .accordion:after {
   content: '\02795'; /* Unicode character for "plus" sign (+) */
-  font-size: 30px;
+  font-size: 10px;
   color: #777;
   float: right;
   margin-left: 5px;
 }
 
 .active:after {
-  font-size: 30px;
+  font-size: 15px;
   content: "\02796"; /* Unicode character for "minus" sign (-) */
 }
 
@@ -102,11 +104,18 @@
 }
 
 p {
-  font-size: 40px;
+  font-size: 20px;
 }
 
 .favouritesDiv {
   width: 100%;
-  padding: 20px;
+  padding: 5px;
   background-color: green;
+}
+
+@media (max-width: 600px){
+  body {
+    width: 88%;
+    height: 88%;
+  }
 }
