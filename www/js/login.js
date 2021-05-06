@@ -6,7 +6,8 @@
     }); // end of document ready
 })(jQuery); // end of jQuery name space
 
-const herokuUrl = "https://apilergens.herokuapp.com";
+//const herokuUrl = "https://apilergens.herokuapp.com";
+const herokuUrl = "http://localhost:5000";
 
 function loginSwap(){
     const signUpButton = $('#signUp');
@@ -48,7 +49,6 @@ function registerFunction(){
 }
 
 function logApiCall(logEmail, logPass){
-    console.log(logEmail+"          "+logPass);
     $.ajax({
         method: "POST",
         url: herokuUrl+"/login/user",
@@ -59,14 +59,15 @@ function logApiCall(logEmail, logPass){
             }
         }
       }).done(function (msg) {
+          console.log(msg)
           if(msg != 'Invalid credentials'){
             usernameFunction(msg.email);
             location.href="menu.html#home";
           } else {
               alert('Usuario o contraseña incorrectos');
           }
-          
       }).fail(function (data) {
+          console.log(data);
           alert("No se ha encontrado el usuario");
       });
 }

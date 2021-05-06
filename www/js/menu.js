@@ -13,7 +13,8 @@
     }); // end of document ready
 })(jQuery); // end of jQuery name space
 
-const herokuUrl = "https://apilergens.herokuapp.com";
+//const herokuUrl = "https://apilergens.herokuapp.com";
+const herokuUrl = "http://localhost:5000";
 
 function helloText(){
     var email = localStorage.getItem('email');
@@ -64,6 +65,7 @@ function srcRestaurant(){
               $('#restaurantSearchDiv').empty();
               fullAcordion(restaurant);
           }).fail(function (data) {
+              console.log(data);
               alert("No se encuentra el codigo");
           });
     } else {
@@ -76,7 +78,7 @@ function fullAcordion(restaurant){
     var name = resName.toUpperCase();
     $('#restaurantSearchDiv').append("<button id='acordion' class='accordion'>"+name+"</button><div id='acordionPanel' class='panel'><p><strong>Calle: </strong>"+restaurant.address+"</p><p><strong>Telefono: </strong>"+restaurant.phone+"</p><button id='"+resName.replace(" ", "_")+"'>Ver carta</button></div>");
 
-    popupListener(restaurant.name);
+    popupListener(restaurant.name, restaurant);
 
     $('#acordion').on("click",function() {
         /* Toggle between adding and removing the "active" class,
@@ -97,7 +99,7 @@ function fullAcordion(restaurant){
     });
 }
 
-function popupListener(id){
+function popupListener(id, restaurant){
     var name = id.replace(" ", "_");
     var btnOpenPopup = $('#'+name);
     var btnClosePopup = $('#btn-close-popup');
@@ -107,12 +109,24 @@ function popupListener(id){
     btnOpenPopup.on("click", function(){
         overlay.addClass('active');
         popup.addClass('active');
+        fillInRestaurantPopup(restaurant);
     });
 
     btnClosePopup.on("click", function(){
         overlay.removeClass('active');
         popup.removeClass('active');
     });
+}
+
+function fillInRestaurantPopup(restaurant){
+
+    $('#restaurantName').empty().append("<h1>"+restaurant.name.toUpperCase()+"</h1>");
+    $('#restaurantDishes').empty()
+    for (let i = 0; i < restaurant.dishes.length; i++) {
+        $('#restaurantDishes').append(restaurant.dishes[i]+"<br>");
+        
+    }
+    
 }
 
 function fullFavourites(user){
