@@ -60,7 +60,7 @@ function logApiCall(logEmail, logPass){
         }
       }).done(function (msg) {
           if(msg != 'Invalid credentials'){
-            usernameFunction(msg.name);
+            usernameFunction(msg.email);
             location.href="menu.html#home";
           } else {
               alert('Usuario o contraseña incorrectos');
@@ -95,13 +95,13 @@ function regApiCall(user){
         }
       }).done(function (msg) {
           alert("REGISTER correcto");
-          usernameFunction(user.name);
+          usernameFunction(user.email);
           location.href="menu.html#home";
       }).fail(function (data) {
           console.log(data);
       });
 }
 
-function usernameFunction(userName){
-    localStorage.setItem('name', userName);
+function usernameFunction(email){
+    localStorage.setItem('email', email);
 }

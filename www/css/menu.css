@@ -34,7 +34,7 @@
   }
 
   /* Boton y input de buscar restaurantes */
-  button {
+  .searchButton {
     width: 16%;
     height: 40px;
     padding: 2px;
@@ -51,12 +51,13 @@
   /* Mensaje saludo header*/
   .topnav {
     display: block;
-    background-color: #ff464e;;
+    background-color: #ff464e;
     width: 100%;
-    overflow: hidden;
     padding: 10px;
     font-size: 40px;
     text-align: center;
+    left: 0;
+    top:0;
   }
 
   .maintab{
@@ -66,7 +67,7 @@
   /* CSS Acordeon lista restaurantes */
   /* Style the buttons that are used to open and close the accordion panel */
 .accordion {
-  background-color: #eee;
+  background-color: rgb(255, 255, 255);
   cursor: pointer;
   padding: 10px;
   width: 100%;
@@ -77,19 +78,19 @@
 }
 
 /* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
-.active, .accordion:hover {
-  background-color: #ccc;
+.active {
+  background-color:#ff464e;
 }
 
 .accordion:after {
   content: '\02795'; /* Unicode character for "plus" sign (+) */
   font-size: 10px;
-  color: #777;
+  color: white;
   float: right;
   margin-left: 5px;
 }
 
-.active:after {
+.accordionActive:after {
   font-size: 15px;
   content: "\02796"; /* Unicode character for "minus" sign (-) */
 }
@@ -108,13 +109,64 @@ p {
 }
 
 .favouritesDiv {
+  background-color: lightgray;
   width: 100%;
-  padding: 20px;
+  padding: 10px;
   height: 76vh;
   overflow-x: hidden;
   overflow-y: auto;
 
 }
+
+.overlay {
+	background: rgba(0,0,0,.3);
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	align-items: center;
+	justify-content: center;
+	display: flex;
+	visibility: hidden;
+}
+
+.overlay.active {
+	visibility: visible;
+}
+
+.popup {
+	background: #F8F8F8;
+	box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.3);
+	border-radius: 3px;
+	font-family: 'Montserrat', sans-serif;
+	padding: 20px;
+	text-align: center;
+	width: 80%;
+  height: 90%;
+	
+	transition: .3s ease all;
+	transform: scale(0.7);
+	opacity: 0;
+}
+
+.popup .btn-close-popup {
+	font-size: 16px;
+	line-height: 16px;
+	display: block;
+	text-align: right;
+	transition: .3s ease all;
+	color: #BBBBBB;
+}
+
+.popup .btn-close-popup:hover {
+	color: #000;
+}
+
+/* ------------------------- */
+/* ANIMACIONES */
+/* ------------------------- */
+.popup.active {	transform: scale(1); opacity: 1; }
 
 @media (max-width: 600px){
   body {
