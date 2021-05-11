@@ -16,18 +16,42 @@
 //const herokuUrl = "https://apilergens.herokuapp.com";
 const herokuUrl = "http://localhost:5000";
 
+var userData = "";
+var favouritesRes = "";
+
 function helloText(){
     var email = localStorage.getItem('email');
     $.ajax({
         method: "GET",
         url: herokuUrl+"/users/getByEmail?email="+email,
         dataType: "json"
-      }).done(function (msg) {
-        $('#nameHeader').append('<label> Hola, '+msg.name+'!</label>');
-        fullFavourites(msg);
+      }).done(function (user) {
+        userData = user;
+        $('#nameHeader').append('<label> Hola, '+user.name+'!</label>');
+        // Recuperar restaurantes favoritos
+        favouritesCall();
       }).fail(function (data) {
           alert("Error al encontrar usuario");
       });
+}
+
+function favouritesCall(){
+
+    $.ajax({
+        method: "POST",
+        url: herokuUrl+"/restaurants/getById",
+        data:{
+            "favourites":userData.favourites
+          }
+      }).done(function (favs) {
+          favouritesRes = favs;
+          console.log(favouritesRes);
+          fullFavourites(userData);
+      }).fail(function (data) {
+          console.log(data);
+          alert("Something went wrong");
+      });
+
 }
 
 function activeTab(){
@@ -73,34 +97,20 @@ function srcRestaurant(){
     }
 }
 
+// Search Restaurant accordion
 function fullAcordion(restaurant){
     var resName = restaurant.name;
     var name = resName.toUpperCase();
-    $('#restaurantSearchDiv').append("<button id='acordion' class='accordion'>"+name+"</button><div id='acordionPanel' class='panel'><p><strong>Calle: </strong>"+restaurant.address+"</p><p><strong>Telefono: </strong>"+restaurant.phone+"</p><button id='"+resName.replace(" ", "_")+"'>Ver carta</button></div>");
+    $('#restaurantSearchDiv').append("<button id='acordion' class='accordion'>"+name.toUpperCase()+"</button><div id='acordionPanel' class='panel'><p><strong>Calle: </strong>"+restaurant.address+"</p><p><strong>Telefono: </strong>"+restaurant.phone+"</p><button id='"+resName.replaceAll(" ", "_")+"' class='see-dishes-Btn' >Ver carta</button></div>");
 
     popupListener(restaurant.name, restaurant);
 
-    $('#acordion').on("click",function() {
-        /* Toggle between adding and removing the "active" class,
-        to highlight the button that controls the panel */
-        this.classList.toggle("active");
-
-        var panel=$(this).next(".panel");
-			
-        // Open accordion
-        if(panel.css("display")=="none"){		
-            panel.slideDown(250);			
-            $(this).addClass("open");
-        }
-        else{ // Close accordion
-            panel.slideUp(250);
-            $(this).removeClass("open");	
-        }
-    });
+    accordionListener("acordion");
 }
 
+// Popup listener for all accordions
 function popupListener(id, restaurant){
-    var name = id.replace(" ", "_");
+    var name = id.replaceAll(" ", "_");
     var btnOpenPopup = $('#'+name);
     var btnClosePopup = $('#btn-close-popup');
     var overlay = $('.overlay');
@@ -118,39 +128,56 @@ function popupListener(id, restaurant){
     });
 }
 
+// Fill in function for all popups
 function fillInRestaurantPopup(restaurant){
 
-    $('#restaurantName').empty().append("<h1>"+restaurant.name.toUpperCase()+"</h1>");
-    $('#restaurantDishes').empty()
+    $('#restaurantDishes').empty();
+    $('#restaurantName').empty().append("<h2>"+restaurant.name.toUpperCase()+"</i><span id='"+restaurant._id+"' class='fa fa-star'></span></h2>");
+
+    $('#'+restaurant._id).on('click', function() {
+        this.classList.toggle("checked");
+    });
+
+    /*
+        Dentro del for habrá que hacer control de alergenos y añadir class="fas fa-times" (X) o class='fas fa-check' (tick)
+        <i class=''>
+    */ 
     for (let i = 0; i < restaurant.dishes.length; i++) {
-        $('#restaurantDishes').append(restaurant.dishes[i]+"<br>");
-        
+        $('#restaurantDishes').append("<button id='"+restaurant.dishes[i].name.replaceAll(" ", "_")+"' class='accordion'>"+restaurant.dishes[i].name+"</button><div id='acordionPanel' class='panel'><p font-size='10px'><strong>Ingredients: </strong>"+restaurant.dishes[i].ingredients[0]+"</p></div>");
+        accordionListener(restaurant.dishes[i].name.replaceAll(" ", "_"));
     }
-    
 }
 
+// Fill in function for favourites restaurants div
 function fullFavourites(user){
     
     for (let i = 0; i < user.favourites.length; i++) {
-        $('#favouritesRes').append("<button id='acordion"+i+"' class='accordion'>"+user.favourites[i]+"</button><div id='acordionPanel' class='panel'><p><strong>Calle: </strong></p><p><strong>Telefono: </strong></p><button id='"+user.favourites[i]+"'>Ver carta</button></div>");
+        $('#favouritesRes').append("<button id='acordion"+i+"' class='accordion'>"+favouritesRes[i].name.toUpperCase()+"</button><div id='acordionPanel' class='panel'><p><strong>Calle: </strong>"+favouritesRes[i].address+"</p><p><strong>Telefono: </strong>"+favouritesRes[i].phone+"</p><button id='"+favouritesRes[i].name.replaceAll(" ","_")+"' class='see-dishes-Btn'>Ver carta</button></div>");
 
-        popupListener(user.favourites[i]);
+        popupListener(favouritesRes[i].name.replaceAll(" ","_"), favouritesRes[i]);
 
-        $('#acordion'+i).on("click",function() {
-            /* Toggle between adding and removing the "active" class,
-            to highlight the button that controls the panel */
-            this.classList.toggle("accordionActive");
-    
-            var panel=$(this).next(".panel");
-                
-            // Open accordion
-            if(panel.css("display")=="none"){			
-                panel.slideDown(250);		
-                $(this).addClass("open");
-            }else{ // Close accordion
-                panel.slideUp(250);
-                $(this).removeClass("open");	
-            }
-        });
+        accordionListener("acordion"+i)
     }
+}
+
+// Accordion listener
+function accordionListener(name){
+
+    $('#'+name).on("click",function() {
+        /* Toggle between adding and removing the "active" class,
+        to highlight the button that controls the panel */
+        this.classList.toggle("accordionActive");
+        this.classList.toggle("active");
+
+        var panel=$(this).next(".panel");
+            
+        // Open accordion
+        if(panel.css("display")=="none"){			
+            panel.slideDown(250);		
+            $(this).addClass("open");
+        }else{ // Close accordion
+            panel.slideUp(250);
+            $(this).removeClass("open");	
+        }
+    });
 }
