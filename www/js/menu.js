@@ -13,11 +13,12 @@
     }); // end of document ready
 })(jQuery); // end of jQuery name space
 
-const herokuUrl = "https://apilergens.herokuapp.com";
-//const herokuUrl = "http://localhost:5000";
+//const herokuUrl = "https://apilergens.herokuapp.com";
+const herokuUrl = "http://localhost:5000";
 
 var userData = "";
 var favouritesRes = "";
+var ingNames = "";
 
 function helloText(){
     var email = localStorage.getItem('email');
@@ -45,11 +46,59 @@ function favouritesCall(){
           }
       }).done(function (favs) {
           favouritesRes = favs;
-          console.log(favouritesRes);
           fullFavourites(userData);
       }).fail(function (data) {
           console.log(data);
           alert("Something went wrong");
+      });
+
+}
+
+function srcRestaurant(){
+    var code = $('#srcInput').val();
+    if(code != "" || code < 100001){
+        $.ajax({
+            method: "GET",
+            url: herokuUrl+"/restaurants/getByCode?code="+code,
+            dataType: "json"
+          }).done(function (restaurant) {
+              $('#restaurantSearchDiv').empty();
+              fullAcordion(restaurant);
+          }).fail(function (data) {
+              console.log(data);
+              alert("No se encuentra el codigo");
+          });
+    } else {
+        alert("Codigo incorrecto");
+    }
+}
+
+async function ingredientsCall(ingredientIds, restaurant, i){
+
+    $.ajax({
+        method: "POST",
+        url: herokuUrl+"/ingredients/getByListId",
+        data:{
+            "ingredients":ingredientIds
+          }
+      }).done(function (ingr) {
+          var namesString = "";
+
+          for (let y = 0; y < ingr.length; y++) {
+              if(y == ingr.length - 1){
+                namesString += ingr[y].name + ". ";
+              } else {
+                namesString += ingr[y].name + ", ";
+              }
+          }
+            
+          $('#restaurantDishes').append("<button id='"+restaurant.dishes[i].name.replaceAll(" ", "_")+"' class='accordion'>"+restaurant.dishes[i].name+"</button><div id='acordionPanel' class='panel'><p font-size='10px'><strong>Ingredients: </strong>"+namesString+"</p></div>");
+          accordionListener(restaurant.dishes[i].name.replaceAll(" ", "_"));
+
+      }).fail(function (data) {
+          console.log(data);
+          alert("Something went wrong");
+          return false;
       });
 
 }
@@ -76,25 +125,6 @@ function navListeners(){
         $('#homeTab').hide();
         $('#profileTab').show();
     });
-}
-
-function srcRestaurant(){
-    var code = $('#srcInput').val();
-    if(code != "" || code < 100001){
-        $.ajax({
-            method: "GET",
-            url: herokuUrl+"/restaurants/getByCode?code="+code,
-            dataType: "json"
-          }).done(function (restaurant) {
-              $('#restaurantSearchDiv').empty();
-              fullAcordion(restaurant);
-          }).fail(function (data) {
-              console.log(data);
-              alert("No se encuentra el codigo");
-          });
-    } else {
-        alert("Codigo incorrecto");
-    }
 }
 
 // Search Restaurant accordion
@@ -129,7 +159,7 @@ function popupListener(id, restaurant){
 }
 
 // Fill in function for all popups
-function fillInRestaurantPopup(restaurant){
+async function fillInRestaurantPopup(restaurant){
 
     $('#restaurantDishes').empty();
     $('#restaurantName').empty().append("<h2>"+restaurant.name.toUpperCase()+"</i><span id='"+restaurant._id+"' class='fa fa-star'></span></h2>");
@@ -143,8 +173,9 @@ function fillInRestaurantPopup(restaurant){
         <i class=''>
     */ 
     for (let i = 0; i < restaurant.dishes.length; i++) {
-        $('#restaurantDishes').append("<button id='"+restaurant.dishes[i].name.replaceAll(" ", "_")+"' class='accordion'>"+restaurant.dishes[i].name+"</button><div id='acordionPanel' class='panel'><p font-size='10px'><strong>Ingredients: </strong>"+restaurant.dishes[i].ingredients[0]+"</p></div>");
-        accordionListener(restaurant.dishes[i].name.replaceAll(" ", "_"));
+        
+        ingredientsCall(restaurant.dishes[i].ingredients, restaurant, i);
+        
     }
 }
 
