@@ -21,19 +21,31 @@ var favouritesRes = "";
 var ingNames = "";
 
 function helloText(){
+
     var email = localStorage.getItem('email');
+
     $.ajax({
         method: "GET",
         url: herokuUrl+"/users/getByEmail?email="+email,
         dataType: "json"
       }).done(function (user) {
         userData = user;
+        console.log(userData)
         $('#nameHeader').append('<label> Hola, '+user.name+'!</label>');
+        profileData()
         // Recuperar restaurantes favoritos
         favouritesCall();
       }).fail(function (data) {
           alert("Error al encontrar usuario");
       });
+}
+
+function profileData(){
+    
+    $('#profileData').append('<li> User: '+userData.name+'</li>');
+    $('#profileData').append('<li> Email: '+userData.email+'</li>');
+    $('#profileData').append('<li> Password: '+userData.password+'</li>');
+
 }
 
 function favouritesCall(){
@@ -82,18 +94,50 @@ async function ingredientsCall(ingredientIds, restaurant, i){
             "ingredients":ingredientIds
           }
       }).done(function (ingr) {
-          var namesString = "";
+            var namesString = "";
+            var allergy = false;
 
           for (let y = 0; y < ingr.length; y++) {
-              if(y == ingr.length - 1){
+
+            console.log("Ingr = "+ingr[y].allergen)
+
+            if(y == ingr.length - 1){
                 namesString += ingr[y].name + ". ";
               } else {
                 namesString += ingr[y].name + ", ";
               }
+
+            if(!allergy) {
+
+                for (let z = 0; z < userData.allergies; z++) {
+
+                    console.log("Allergy = " + userData.allergies[z])
+
+                    if (ingr[y].allergen == userData.allergies[z]) {
+    
+                        allergy = true;
+    
+                        break;
+    
+                    }
+    
+                }
+
+            }
+              
+          }
+
+          if (!allergy) {
+
+            stringClass = 'fas fa-times'
+
+          } else {
+
+            stringClass = 'fas fa-check'
+
           }
             
-          $('#restaurantDishes').append("<button id='"+restaurant.dishes[i].name.replaceAll(" ", "_")+"' class='accordion'>"+restaurant.dishes[i].name+"</button><div id='acordionPanel' class='panel'><p font-size='10px'><strong>Ingredients: </strong>"+namesString+"</p></div>");
-          accordionListener(restaurant.dishes[i].name.replaceAll(" ", "_"));
+         appendIngredient(restaurant, i, namesString, stringClass);
 
       }).fail(function (data) {
           console.log(data);
@@ -105,11 +149,15 @@ async function ingredientsCall(ingredientIds, restaurant, i){
 
 function activeTab(){
     $('#home').on("click",function(){
+        $('#nameHeader').empty()
+        $('#nameHeader').append('<label> Hola, '+userData.name+'!</label>')
         $('#profile').removeClass("focus");
         $('#home').addClass("focus");
     });
 
     $('#profile').on("click",function(){
+        $('#nameHeader').empty()
+        $('#nameHeader').append('<label> Tu perfil </label>');
         $('#home').removeClass("focus");
         $('#profile').addClass("focus");
     });
@@ -211,4 +259,36 @@ function accordionListener(name){
             $(this).removeClass("open");	
         }
     });
+}
+
+function changePassword(){
+
+    email = "amador@gmail.com"
+    password1 = "amador"
+    password2 = "1234"
+
+    $.ajax({
+        method: "POST",
+        url: herokuUrl+"/users/changePassword",
+        data:
+            {
+                "email": email,
+                "password1": password1,
+                "password2": password2
+            }
+      }).done(function (msg) {
+
+          alert("Password Changed");
+
+      }).fail(function (data) {
+          console.log(data);
+      });
+
+}
+
+function appendIngredient(restaurant, i, namesString, stringClass) {
+
+    $('#restaurantDishes').append("<button id='"+restaurant.dishes[i].name.replaceAll(" ", "_")+"' class='accordion "+stringClass+"'>"+restaurant.dishes[i].name+"</button><div id='acordionPanel' class='panel'><p font-size='10px'><strong>Ingredients: </strong>"+namesString+"</p></div>");
+    accordionListener(restaurant.dishes[i].name.replaceAll(" ", "_"));
+
 }
