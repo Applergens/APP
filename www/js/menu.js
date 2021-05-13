@@ -141,7 +141,7 @@ async function ingredientsCall(ingredientIds, restaurant, i){
 
       }).fail(function (data) {
           console.log(data);
-          alert("Something went wrong");
+          alert("Something went wrong")
           return false;
       });
 
