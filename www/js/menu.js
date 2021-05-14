@@ -41,10 +41,19 @@ function helloText(){
 }
 
 function profileData(){
+
+    popupPasswordListener()
     
     $('#profileData').append('<li> User: '+userData.name+'</li>');
     $('#profileData').append('<li> Email: '+userData.email+'</li>');
-    $('#profileData').append('<li> Password: '+userData.password+'</li>');
+    $('#profileData').append('<button id="btnPassword">Change Password</button>');
+    $('#btnPassword').on("click", function(){
+        
+        popupPasswordListener()
+        console.log("El Cambio")
+    });
+    
+
 
 }
 
@@ -95,19 +104,21 @@ async function ingredientsCall(ingredientIds, restaurant, i){
           }
       }).done(function (ingr) {
             var namesString = "";
-            var allergy = false;
+
+            var allergy = false
+            stringClass = 'fas fa-times'
 
           for (let y = 0; y < ingr.length; y++) {
 
             console.log("Ingr = "+ingr[y].allergen)
+
+            console.log("allergies = " + userData.allergies[y])
 
             if(y == ingr.length - 1){
                 namesString += ingr[y].name + ". ";
               } else {
                 namesString += ingr[y].name + ", ";
               }
-
-            if(!allergy) {
 
                 for (let z = 0; z < userData.allergies; z++) {
 
@@ -117,24 +128,15 @@ async function ingredientsCall(ingredientIds, restaurant, i){
     
                         allergy = true;
     
+                        stringClass = 'fas fa-check'
+
                         break;
     
                     }
     
                 }
 
-            }
               
-          }
-
-          if (!allergy) {
-
-            stringClass = 'fas fa-times'
-
-          } else {
-
-            stringClass = 'fas fa-check'
-
           }
             
          appendIngredient(restaurant, i, namesString, stringClass);
@@ -198,6 +200,24 @@ function popupListener(id, restaurant){
         overlay.addClass('active');
         popup.addClass('active');
         fillInRestaurantPopup(restaurant);
+    });
+
+    btnClosePopup.on("click", function(){
+        overlay.removeClass('active');
+        popup.removeClass('active');
+    });
+}
+
+function popupPasswordListener(){
+
+    var btnOpenPopup = $('#btnPassword');
+    var btnClosePopup = $('#btn-close-popupPassword');
+    var overlay = $('.overlay');
+    var popup = $('.popupPassword');
+
+    btnOpenPopup.on("click", function(){
+        overlay.addClass('active');
+        popup.addClass('active');
     });
 
     btnClosePopup.on("click", function(){
