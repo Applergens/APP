@@ -94,7 +94,9 @@ function srcRestaurant(){
     }
 }
 
-async function ingredientsCall(ingredientIds, restaurant, i){
+async function ingredientsCall(ingredientIds, restaurant, index){
+
+    console.log("Ingredients IDS = " + ingredientIds)
 
     $.ajax({
         method: "POST",
@@ -103,43 +105,47 @@ async function ingredientsCall(ingredientIds, restaurant, i){
             "ingredients":ingredientIds
           }
       }).done(function (ingr) {
-            var namesString = "";
 
-            var allergy = false
-            stringClass = 'fas fa-times'
+        var namesString = "";
 
-          for (let y = 0; y < ingr.length; y++) {
+        var allergy = false
+        stringClass = 'fas fa-check'
 
-            console.log("Ingr = "+ingr[y].allergen)
+        for (i = 0; i < ingr.length; i++) {
 
-            console.log("allergies = " + userData.allergies[y])
+            console.log("Ingr = "+ingr[i].allergen)
 
-            if(y == ingr.length - 1){
-                namesString += ingr[y].name + ". ";
-              } else {
-                namesString += ingr[y].name + ", ";
-              }
+            if(i == ingr.length - 1){
+                namesString += ingr[i].name + ". "
+            } else {
+                namesString += ingr[i].name + ", "
+            }
 
-                for (let z = 0; z < userData.allergies; z++) {
+            if (!allergy) {
 
-                    console.log("Allergy = " + userData.allergies[z])
+                for (j = 0; j < userData.allergies.length; j++) {
 
-                    if (ingr[y].allergen == userData.allergies[z]) {
+                    console.log("Allergy = " + userData.allergies[j])
     
+                    if (ingr[i].allergen == userData.allergies[j]) {
+            
+                        console.log("Es alergico")
+
                         allergy = true;
+            
+                        stringClass = 'fas fa-times'
     
-                        stringClass = 'fas fa-check'
-
                         break;
-    
+            
                     }
-    
+        
                 }
 
-              
-          }
+            }
+
+        }
             
-         appendIngredient(restaurant, i, namesString, stringClass);
+         appendIngredient(restaurant, index, namesString, stringClass);
 
       }).fail(function (data) {
           console.log(data);
@@ -241,6 +247,10 @@ async function fillInRestaurantPopup(restaurant){
         <i class=''>
     */ 
     for (let i = 0; i < restaurant.dishes.length; i++) {
+
+        console.log('Restaurant name = ' + restaurant.name)
+        console.log('Dish name = ' + restaurant.dishes[i].name)
+        console.log('Ingredients = ' + restaurant.dishes[i].ingredients)
         
         ingredientsCall(restaurant.dishes[i].ingredients, restaurant, i);
         
