@@ -94,9 +94,9 @@ function srcRestaurant(){
     }
 }
 
-async function ingredientsCall(ingredientIds, restaurant, index){
-
-    console.log("Ingredients IDS = " + ingredientIds)
+async function ingredientsCall(restaurant, index){
+    
+    ingredientIds = restaurant.dishes[index].ingredients
 
     $.ajax({
         method: "POST",
@@ -108,12 +108,11 @@ async function ingredientsCall(ingredientIds, restaurant, index){
 
         var namesString = "";
 
-        var allergy = false
-        stringClass = 'fas fa-check'
+        allergy = false
+
+        classString = 'fas fa-check'
 
         for (i = 0; i < ingr.length; i++) {
-
-            console.log("Ingr = "+ingr[i].allergen)
 
             if(i == ingr.length - 1){
                 namesString += ingr[i].name + ". "
@@ -124,16 +123,12 @@ async function ingredientsCall(ingredientIds, restaurant, index){
             if (!allergy) {
 
                 for (j = 0; j < userData.allergies.length; j++) {
-
-                    console.log("Allergy = " + userData.allergies[j])
     
                     if (ingr[i].allergen == userData.allergies[j]) {
-            
-                        console.log("Es alergico")
 
                         allergy = true;
             
-                        stringClass = 'fas fa-times'
+                        classString = 'fas fa-times'
     
                         break;
             
@@ -144,8 +139,25 @@ async function ingredientsCall(ingredientIds, restaurant, index){
             }
 
         }
-            
-         appendIngredient(restaurant, index, namesString, stringClass);
+
+        if (allergy) {
+         
+            console.log("X - Allergic")
+
+        } else {
+
+            console.log("V - Not Allergic")
+
+        }
+
+        $('#restaurantDishes').append("<button id='"+restaurant.dishes[index].name.replaceAll(" ", "_")+"' class='accordion "+classString+"'>"+restaurant.dishes[index].name+"</button><div id='acordionPanel' class='panel'><p font-size='10px'><strong>Ingredients: </strong>"+namesString+"</p></div>");
+        accordionListener(restaurant.dishes[index].name.replaceAll(" ", "_"));
+
+        if (restaurant.dishes.length != index+1) {
+
+            ingredientsCall(restaurant, index+1);
+
+        }
 
       }).fail(function (data) {
           console.log(data);
@@ -246,15 +258,11 @@ async function fillInRestaurantPopup(restaurant){
         Dentro del for habrá que hacer control de alergenos y añadir class="fas fa-times" (X) o class='fas fa-check' (tick)
         <i class=''>
     */ 
-    for (let i = 0; i < restaurant.dishes.length; i++) {
 
-        console.log('Restaurant name = ' + restaurant.name)
-        console.log('Dish name = ' + restaurant.dishes[i].name)
-        console.log('Ingredients = ' + restaurant.dishes[i].ingredients)
+    console.log('Restaurant name = ' + restaurant.name)
         
-        ingredientsCall(restaurant.dishes[i].ingredients, restaurant, i);
-        
-    }
+    ingredientsCall(restaurant, 0);
+
 }
 
 // Fill in function for favourites restaurants div
@@ -316,9 +324,8 @@ function changePassword(){
 
 }
 
-function appendIngredient(restaurant, i, namesString, stringClass) {
+function appendIngredients(restaurant, i, namesString, classString) {
 
-    $('#restaurantDishes').append("<button id='"+restaurant.dishes[i].name.replaceAll(" ", "_")+"' class='accordion "+stringClass+"'>"+restaurant.dishes[i].name+"</button><div id='acordionPanel' class='panel'><p font-size='10px'><strong>Ingredients: </strong>"+namesString+"</p></div>");
-    accordionListener(restaurant.dishes[i].name.replaceAll(" ", "_"));
+    
 
 }
