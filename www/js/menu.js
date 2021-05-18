@@ -13,8 +13,8 @@
     }); // end of document ready
 })(jQuery); // end of jQuery name space
 
-const herokuUrl = "https://apilergens.herokuapp.com";
-//const herokuUrl = "http://localhost:5000";
+// const herokuUrl = "https://apilergens.herokuapp.com";
+const herokuUrl = "http://localhost:5000";
 
 var userData = "";
 var favouritesRes = "";
@@ -40,20 +40,13 @@ function helloText(){
       });
 }
 
-function profileData(){
-
-    popupPasswordListener()
+function profileData(){   
     
     $('#profileData').append('<li> User: '+userData.name+'</li>');
     $('#profileData').append('<li> Email: '+userData.email+'</li>');
     $('#profileData').append('<button id="btnPassword">Change Password</button>');
-    $('#btnPassword').on("click", function(){
-        
-        popupPasswordListener()
-        console.log("El Cambio")
-    });
-    
 
+    popupPasswordListener()
 
 }
 
@@ -61,13 +54,13 @@ function favouritesCall(){
 
     $.ajax({
         method: "POST",
-        url: herokuUrl+"/restaurants/getById",
+        url: herokuUrl+"/restaurants/getByListId",
         data:{
             "favourites":userData.favourites
           }
       }).done(function (favs) {
           favouritesRes = favs;
-          fullFavourites(userData);
+          fullFavourites();
       }).fail(function (data) {
           console.log(data);
           alert("Something went wrong");
@@ -226,6 +219,7 @@ function popupListener(id, restaurant){
     });
 }
 
+// Popup Password
 function popupPasswordListener(){
 
     var btnOpenPopup = $('#btnPassword');
@@ -247,11 +241,29 @@ function popupPasswordListener(){
 // Fill in function for all popups
 async function fillInRestaurantPopup(restaurant){
 
+    index = userData.favourites.indexOf(restaurant._id)
+
+    if (index == -1) {
+
+        classString = "fa fa-star"
+
+    } else {
+
+        classString = "fa fa-star checked"
+
+    }
+
     $('#restaurantDishes').empty();
-    $('#restaurantName').empty().append("<h2>"+restaurant.name.toUpperCase()+"</i><span id='"+restaurant._id+"' class='fa fa-star'></span></h2>");
+    $('#restaurantName').empty().append("<h2>"+restaurant.name.toUpperCase()+"</i><span id='"+restaurant._id+"' class='"+classString+"'></span></h2>");
 
     $('#'+restaurant._id).on('click', function() {
         this.classList.toggle("checked");
+
+        $('.fa fa-star').prop('disabled', true)
+        $('.fa fa-star checked').prop('disabled', true)
+
+        setFavouriteCall(restaurant._id)
+
     });
 
     /*
@@ -265,16 +277,50 @@ async function fillInRestaurantPopup(restaurant){
 
 }
 
+function setFavouriteCall(restaurantId) {
+
+    $.ajax({
+        method: "POST",
+        url: herokuUrl+"/user/setFavourite",
+        data:
+            {
+                "email": userData.email,
+                "restaurantId": restaurantId,
+            }
+      }).done(function (newFavs) {
+
+        console.log('New favs length = ' + newFavs.length)
+
+        userData.favourites = newFavs
+
+        favouritesCall()
+
+        alert("Favourites updated");
+
+      }).fail(function (data) {
+          console.log(data);
+      });
+
+}
+
 // Fill in function for favourites restaurants div
-function fullFavourites(user){
+function fullFavourites(){
+
+    $('#favouritesRes').empty()
     
-    for (let i = 0; i < user.favourites.length; i++) {
+    for (let i = 0; i < favouritesRes.length; i++) {
+
+        console.log('Favourites = ' + favouritesRes[i].name)
+
         $('#favouritesRes').append("<button id='acordion"+i+"' class='accordion'>"+favouritesRes[i].name.toUpperCase()+"</button><div id='acordionPanel' class='panel'><p><strong>Calle: </strong>"+favouritesRes[i].address+"</p><p><strong>Telefono: </strong>"+favouritesRes[i].phone+"</p><button id='"+favouritesRes[i].name.replaceAll(" ","_")+"' class='see-dishes-Btn'>Ver carta</button></div>");
 
         popupListener(favouritesRes[i].name.replaceAll(" ","_"), favouritesRes[i]);
 
         accordionListener("acordion"+i)
     }
+
+    // $('.fa fa-star').prop('disabled', false)
+    // $('.fa fa-star checked').prop('disabled', false)
 }
 
 // Accordion listener
@@ -321,11 +367,5 @@ function changePassword(){
       }).fail(function (data) {
           console.log(data);
       });
-
-}
-
-function appendIngredients(restaurant, i, namesString, classString) {
-
-    
 
 }

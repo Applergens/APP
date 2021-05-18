@@ -175,6 +175,38 @@ p {
   padding: 10px;
 }
 
+.popupPassword{
+	background: #F8F8F8;
+	box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.3);
+	border-radius: 3px;
+	font-family: 'Montserrat', sans-serif;
+	padding: 20px;
+	text-align: center;
+	width: 80%;
+  height: 90%;
+	
+	transition: .3s ease all;
+	transform: scale(0.7);
+	opacity: 0;
+}
+
+.popupPassword .btn-close-popup {
+	font-size: 16px;
+	line-height: 16px;
+	display: block;
+	text-align: right;
+	transition: .3s ease all;
+	color: #BBBBBB;
+}
+
+.popupPassword .btn-close-popup:hover {
+	color: #000;
+}
+
+.popupPassword h1 {
+  padding: 10px;
+}
+
 .checked {
   color: orange;
 }
@@ -183,6 +215,7 @@ p {
 /* ANIMACIONES */
 /* ------------------------- */
 .popup.active {	transform: scale(1); opacity: 1; }
+.popupPassword.active {	transform: scale(1); opacity: 1; }
 
 @media (max-width: 600px){
   body {
