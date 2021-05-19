@@ -17,8 +17,8 @@
 
 // VARIABLES GLOBALES =========================================
 
-// const herokuUrl = "https://apilergens.herokuapp.com";
-const herokuUrl = "http://localhost:5000";
+const herokuUrl = "https://apilergens.herokuapp.com";
+// const herokuUrl = "http://localhost:5000";
 
 var userData = "", favouritesRes = "", ingNames = "", allAllergens = "", selectedAllergens = []
 userAllergens = [];
