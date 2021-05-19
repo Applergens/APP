@@ -17,8 +17,8 @@
 
 // VARIABLES GLOBALES =========================================
 
-const herokuUrl = "https://apilergens.herokuapp.com";
-// const herokuUrl = "http://localhost:5000";
+// const herokuUrl = "https://apilergens.herokuapp.com";
+const herokuUrl = "http://localhost:5000";
 
 var userData = "", favouritesRes = "", ingNames = "", allAllergens = "", selectedAllergens = []
 userAllergens = [];
@@ -59,20 +59,23 @@ function allergensCall(){
 
 function favouritesCall(){
 
-    $.ajax({
-        method: "POST",
-        url: herokuUrl+"/restaurants/getByListId",
-        data:{
-            "favourites":userData.favourites
-          }
-      }).done(function (favs) {
-          favouritesRes = favs;
-          fullFavourites();
-      }).fail(function (data) {
-          console.log(data);
-          alert("Something went wrong");
-      });
+    if(userData.favourites == null){
 
+    } else {
+        $.ajax({
+            method: "POST",
+            url: herokuUrl+"/restaurants/getByListId",
+            data:{
+                "favourites":userData.favourites
+            }
+        }).done(function (favs) {
+            favouritesRes = favs;
+            fullFavourites();
+        }).fail(function (data) {
+            console.log(data);
+            alert("Something went wrong");
+        });
+    }
 }
 
 function srcRestaurant(){
@@ -406,7 +409,12 @@ function checkboxListener(id, pos){
 // Fill in function for all popups
 function fillInRestaurantPopup(restaurant){
 
-    index = userData.favourites.indexOf(restaurant._id)
+    if(userData.favourites != null){
+        index = userData.favourites.indexOf(restaurant._id)
+    } else {
+        index = -1;
+    }
+    
 
     if (index == -1) {
         classString = "fa fa-star"
@@ -433,16 +441,18 @@ function fillInRestaurantPopup(restaurant){
 
 // Fill in function for favourites restaurants div
 function fullFavourites(){
-
-    $('#favouritesRes').empty()
+    console.log(favouritesRes);
+    if(favouritesRes != null){
+        $('#favouritesRes').empty()
     
-    for (let i = 0; i < favouritesRes.length; i++) {
-
-        $('#favouritesRes').append("<button id='acordion"+i+"' class='accordion'>"+favouritesRes[i].name.toUpperCase()+" ("+favouritesRes[i].code+") "+"</button><div id='acordionPanel' class='panel'><p><strong>Calle: </strong>"+favouritesRes[i].address+"</p><p><strong>Telefono: </strong>"+favouritesRes[i].phone+"</p><button id='"+favouritesRes[i].name.replaceAll(" ","_")+"' class='see-dishes-Btn'>Ver carta</button></div>");
-
-        popupListener(favouritesRes[i].name.replaceAll(" ","_"), favouritesRes[i]);
-
-        accordionListener("acordion"+i)
+        for (let i = 0; i < favouritesRes.length; i++) {
+    
+            $('#favouritesRes').append("<button id='acordion"+i+"' class='accordion'>"+favouritesRes[i].name.toUpperCase()+" ("+favouritesRes[i].code+") "+"</button><div id='acordionPanel' class='panel'><p><strong>Calle: </strong>"+favouritesRes[i].address+"</p><p><strong>Telefono: </strong>"+favouritesRes[i].phone+"</p><button id='"+favouritesRes[i].name.replaceAll(" ","_")+"' class='see-dishes-Btn'>Ver carta</button></div>");
+    
+            popupListener(favouritesRes[i].name.replaceAll(" ","_"), favouritesRes[i]);
+    
+            accordionListener("acordion"+i)
+        }
     }
 }
 
