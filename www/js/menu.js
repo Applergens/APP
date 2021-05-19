@@ -221,7 +221,13 @@ function setAllergies(){
                 "allergens": selectedAllergens
             }
       }).done(function (msg) {
+          userData.allergies = "";
+          userData.allergies = msg;
+
           alert("Alérgenos modificados correctamente");
+
+          $('#overlayAll').removeClass('active');
+          $('#popupAll').removeClass('active');
       }).fail(function (data) {
           console.log(data);
       });
@@ -257,6 +263,12 @@ function activeTab(){
         $('#nameHeader').append('<label> PERFIL </label>');
         $('#home').removeClass("focus");
         $('#profile').addClass("focus");
+
+        // Close Popup at window change
+        $('.overlay').removeClass('active');
+        $('.overlayPass').removeClass('active');
+        $('.popup').removeClass('active');
+        $('.popupPass').removeClass('active');
     });
 }
 
@@ -312,8 +324,8 @@ function popupProfileListener(openBtn){
         var overlay = $('.overlayPass');
         var popup = $('.popupPass');
     } else {
-        var overlay = $('.overlay');
-        var popup = $('.popup');
+        var overlay = $('#overlayAll');
+        var popup = $('#popupAll');
     }
 
     btnOpenPopup.on("click", function(){
@@ -346,13 +358,15 @@ function fillInChangePassword(){
 
 function fillInChangeAllergens(allergens){
 
-    $('#allergensTable').append("<tr><th>NOMBRE DEL ALÉRGENO</th><th></th></tr>");
+    $('#allergensTable').append("<tr><th>NOMBRE DEL ALÉRGENO</th></tr>");
 
-    for (let i = 0; i < allergens.length; i++) {
-        $('#allergensTable').append("<tr><td id='"+allergens[i].name.replaceAll(" ","_")+"'>"+allergens[i].name+"</td><td><input id='"+allergens[i]._id+"' type='checkbox'></td></tr>");
+    var i = 0;
+    allergens.forEach(allergen => {
+        $('#allergensTable').append("<tr><td id='"+allergen.name.replaceAll(" ","_")+"'>"+allergen.name+"</td><td><input id='"+allergen._id+"' type='checkbox'></td></tr>");
     
-        checkboxListener(allergens[i]._id, i);
-    }
+        checkboxListener(allergen._id, i);
+        i++;
+    });
 
     $('#allergensTable').append("<tr><td><button id='saveAllergens' style='margin-bottom:20px;'>GUARDAR ALÉRGENOS</button></td><td></td></tr>");
 
@@ -424,9 +438,6 @@ function fullFavourites(){
 
         accordionListener("acordion"+i)
     }
-
-    // $('.fa fa-star').prop('disabled', false)
-    // $('.fa fa-star checked').prop('disabled', false)
 }
 
 // Accordion listener
