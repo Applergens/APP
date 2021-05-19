@@ -41,7 +41,6 @@ function registerFunction(){
 
     if(name!=""&&surname1!=""&&surname2!=""&&regEmail!=""&&dni!=""&&phone!=""&&regPassword!=""){
         var newUser = JSON.parse('{"name":"'+name+'","surname1":"'+surname1+'","surname2":"'+surname2+'","dni":"'+dni+'","phone":"'+phone+'","password":"'+regPassword+'","email":"'+regEmail+'"}');
-        console.log(newUser);
         regApiCall(newUser);
     } else {
         alert("Campos vacios!");
@@ -59,7 +58,6 @@ function logApiCall(logEmail, logPass){
             }
         }
       }).done(function (msg) {
-          console.log(msg)
           if(msg != 'Invalid credentials'){
             usernameFunction(msg.email);
             location.href="menu.html#home";

@@ -56,11 +56,24 @@
             </div>
         </div>
         <div id="profileTab" class="hometab">
+            <div class="profileDiv">
+                <table id="userDataTable">
+                </table>
+            </div>
+            <!-- Change Pass popup -->
+            <div class="overlayPass">
+                <div class="popupPass">
+                    <a href="#" id="btn-close-popup" class="btn-close-popup"><i class="fa fa-times"></i></a>
+                    <div id="container"></div>
+                </div>
+            </div>
+            <!-- Allergies popup -->
             <div class="overlay">
-                <div class="popupPassword">
-                    <a href="#" id="btn-close-popupPassword" class="btn-close-popupPassword"><i class="fa fa-times"></i></a>
-                    <label>Password1</label>
-                    <label>Password2</label>
+                <div class="popup">
+                    <a href="#" id="btn-close-popup" class="btn-close-popup"><i class="fa fa-times"></i></a>
+                    <div id="container">
+                        <table id="allergensTable"></table>
+                    </div>
                 </div>
             </div>
             <ul id="profileData"></ul>

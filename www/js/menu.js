@@ -2,6 +2,8 @@
     $(function(){
         // Saludo personalizado
         helloText();
+        // GetAll Allergens
+        allergensCall();
         // Listeners para ver tab activo
         activeTab();
         navListeners();
@@ -13,12 +15,15 @@
     }); // end of document ready
 })(jQuery); // end of jQuery name space
 
-// const herokuUrl = "https://apilergens.herokuapp.com";
-const herokuUrl = "http://localhost:5000";
+// VARIABLES GLOBALES =========================================
 
-var userData = "";
-var favouritesRes = "";
-var ingNames = "";
+const herokuUrl = "https://apilergens.herokuapp.com";
+// const herokuUrl = "http://localhost:5000";
+
+var userData = "", favouritesRes = "", ingNames = "", allAllergens = "", selectedAllergens = []
+userAllergens = [];
+
+// ==============================================================
 
 function helloText(){
 
@@ -30,7 +35,6 @@ function helloText(){
         dataType: "json"
       }).done(function (user) {
         userData = user;
-        console.log(userData)
         $('#nameHeader').append('<label> Hola, '+user.name+'!</label>');
         profileData()
         // Recuperar restaurantes favoritos
@@ -40,14 +44,18 @@ function helloText(){
       });
 }
 
-function profileData(){   
-    
-    $('#profileData').append('<li> User: '+userData.name+'</li>');
-    $('#profileData').append('<li> Email: '+userData.email+'</li>');
-    $('#profileData').append('<button id="btnPassword">Change Password</button>');
+function allergensCall(){
 
-    popupPasswordListener()
-
+    $.ajax({
+        method: "GET",
+        url: herokuUrl+"/allergens/getAll",
+        dataType: "json"
+      }).done(function (allergens) {
+        allAllergens = allergens;
+        fillInChangeAllergens(allAllergens);
+      }).fail(function (data) {
+          alert("Error al encontrar alérgenos");
+      });
 }
 
 function favouritesCall(){
@@ -133,23 +141,11 @@ async function ingredientsCall(restaurant, index){
 
         }
 
-        if (allergy) {
-         
-            console.log("X - Allergic")
-
-        } else {
-
-            console.log("V - Not Allergic")
-
-        }
-
         $('#restaurantDishes').append("<button id='"+restaurant.dishes[index].name.replaceAll(" ", "_")+"' class='accordion "+classString+"'>"+restaurant.dishes[index].name+"</button><div id='acordionPanel' class='panel'><p font-size='10px'><strong>Ingredients: </strong>"+namesString+"</p></div>");
         accordionListener(restaurant.dishes[index].name.replaceAll(" ", "_"));
 
         if (restaurant.dishes.length != index+1) {
-
             ingredientsCall(restaurant, index+1);
-
         }
 
       }).fail(function (data) {
@@ -157,6 +153,94 @@ async function ingredientsCall(restaurant, index){
           alert("Something went wrong")
           return false;
       });
+
+}
+
+function setFavouriteCall(restaurantId) {
+
+    $.ajax({
+        method: "POST",
+        url: herokuUrl+"/user/setFavourite",
+        data:
+            {
+                "email": userData.email,
+                "restaurantId": restaurantId,
+            }
+      }).done(function (newFavs) {
+
+        userData.favourites = newFavs
+
+        favouritesCall()
+
+        alert("Favourites updated");
+
+      }).fail(function (data) {
+          console.log(data);
+      });
+
+}
+
+function changePassword(pass1, pass2){
+
+    email = userData.email
+    password1 = pass1
+    password2 = pass2
+
+    $.ajax({
+        method: "POST",
+        url: herokuUrl+"/users/changePassword",
+        data:
+            {
+                "email": email,
+                "password1": password1,
+                "password2": password2
+            }
+      }).done(function (msg) {
+
+          alert("Password Changed");
+
+          $('.overlayPass').removeClass('active');
+          $('.popupPass').removeClass('active');
+
+      }).fail(function (data) {
+          console.log(data);
+      });
+
+}
+
+function setAllergies(){
+
+    email = userData.email
+
+    $.ajax({
+        method: "POST",
+        url: herokuUrl+"/user/setAllergens",
+        data:
+            {
+                "email": email,
+                "allergens": selectedAllergens
+            }
+      }).done(function (msg) {
+          alert("Alérgenos modificados correctamente");
+      }).fail(function (data) {
+          console.log(data);
+      });
+
+}
+
+function profileData(){   
+    
+    $('#userDataTable').append('<tr><td><b>Nombre: </td><td>'+userData.name+'</td></tr>');
+    $('#userDataTable').append('<tr><td><b>Primer Apellido: </td><td>'+userData.surname1+'</td></tr>');
+    $('#userDataTable').append('<tr><td><b>Segundo Apellido: </td><td>'+userData.surname2+'</td></tr>');
+    $('#userDataTable').append('<tr><td><b>Email: </td><td>'+userData.email+'</td></tr>');
+    $('#userDataTable').append('<tr><td><b>Telefono: </td><td>'+userData.phone+'</td></tr>');
+    $('#userDataTable').append('<tr><td><b>Cambiar contraseña: </td><td><button id="btnPassword">Cambiar contraseña</button></td></tr>');
+    $('#userDataTable').append('<tr><td><b>Cambiar alergias: </td><td><button id="changeAllergiesBtn">Cambiar alergias</button></td></tr>');
+
+
+    popupProfileListener("btnPassword");
+    popupProfileListener("changeAllergiesBtn");
 
 }
 
@@ -170,7 +254,7 @@ function activeTab(){
 
     $('#profile').on("click",function(){
         $('#nameHeader').empty()
-        $('#nameHeader').append('<label> Tu perfil </label>');
+        $('#nameHeader').append('<label> PERFIL </label>');
         $('#home').removeClass("focus");
         $('#profile').addClass("focus");
     });
@@ -192,7 +276,7 @@ function navListeners(){
 function fullAcordion(restaurant){
     var resName = restaurant.name;
     var name = resName.toUpperCase();
-    $('#restaurantSearchDiv').append("<button id='acordion' class='accordion'>"+name.toUpperCase()+"</button><div id='acordionPanel' class='panel'><p><strong>Calle: </strong>"+restaurant.address+"</p><p><strong>Telefono: </strong>"+restaurant.phone+"</p><button id='"+resName.replaceAll(" ", "_")+"' class='see-dishes-Btn' >Ver carta</button></div>");
+    $('#restaurantSearchDiv').append("<button id='acordion' class='accordion'>"+name.toUpperCase()+" ("+restaurant.code+") "+"</button><div id='acordionPanel' class='panel'><p><strong>Calle: </strong>"+restaurant.address+"</p><p><strong>Telefono: </strong>"+restaurant.phone+"</p><button id='"+resName.replaceAll(" ", "_")+"' class='see-dishes-Btn' >Ver carta</button></div>");
 
     popupListener(restaurant.name, restaurant);
 
@@ -220,16 +304,22 @@ function popupListener(id, restaurant){
 }
 
 // Popup Password
-function popupPasswordListener(){
+function popupProfileListener(openBtn){
 
-    var btnOpenPopup = $('#btnPassword');
-    var btnClosePopup = $('#btn-close-popupPassword');
-    var overlay = $('.overlay');
-    var popup = $('.popupPassword');
+    var btnOpenPopup = $('#'+openBtn);
+    var btnClosePopup = $('.btn-close-popup');
+    if(openBtn=="btnPassword"){
+        var overlay = $('.overlayPass');
+        var popup = $('.popupPass');
+    } else {
+        var overlay = $('.overlay');
+        var popup = $('.popup');
+    }
 
     btnOpenPopup.on("click", function(){
         overlay.addClass('active');
         popup.addClass('active');
+        if(openBtn=="btnPassword"){fillInChangePassword();} else {fillInChangeAllergens();}
     });
 
     btnClosePopup.on("click", function(){
@@ -238,19 +328,70 @@ function popupPasswordListener(){
     });
 }
 
+function fillInChangePassword(){
+    $('#container').empty();
+    $('#container').append('<label>Contraseña antigua: </label><Input type="password" id="oldPassword">');
+    $('#container').append('<label>Contraseña nueva: </label><Input type="password" id="newPassword">');
+    $('#container').append('<button id="changePass" style="margin-top:10px; font-size:16px;">Cambiar contraseña</button>');
+    $('#changePass').on('click', function(){
+        if($('#oldPassword').val() != "" && $('#newPassword').val() != "" && $('#oldPassword').val() != $('#newPassword').val()){
+            changePassword($('#oldPassword').val(), $('#newPassword').val());
+        } else if ($('#oldPassword').val() == $('#newPassword').val()){
+            alert("Las contraseñas no pueden ser iguales!")
+        }else {
+            alert("Rellenar todos los campos!")
+        }
+    });
+}
+
+function fillInChangeAllergens(allergens){
+
+    $('#allergensTable').append("<tr><th>NOMBRE DEL ALÉRGENO</th><th></th></tr>");
+
+    for (let i = 0; i < allergens.length; i++) {
+        $('#allergensTable').append("<tr><td id='"+allergens[i].name.replaceAll(" ","_")+"'>"+allergens[i].name+"</td><td><input id='"+allergens[i]._id+"' type='checkbox'></td></tr>");
+    
+        checkboxListener(allergens[i]._id, i);
+    }
+
+    $('#allergensTable').append("<tr><td><button id='saveAllergens' style='margin-bottom:20px;'>GUARDAR ALÉRGENOS</button></td><td></td></tr>");
+
+    $('#saveAllergens').on('click', function(){
+        if(selectedAllergens.length == 0){
+            var opcion = confirm("No se ha seleccionado ningun alérgeno, desea dejarlo vacio?");
+            if (opcion == true) {
+                setAllergies();
+            } else {
+                alert("Seleccionar alérgenos");
+            }
+        } else {
+            setAllergies(selectedAllergens);
+        }
+    });
+}
+
+function checkboxListener(id, pos){
+
+    var pos = pos;
+    $('#'+id).on( 'change', function() {
+        if( $(this).is(':checked') ) {
+            selectedAllergens.push(id);
+        } else {
+            selectedAllergens.splice(pos, 1);
+        }
+    });
+
+}
+
 // Fill in function for all popups
-async function fillInRestaurantPopup(restaurant){
+function fillInRestaurantPopup(restaurant){
 
     index = userData.favourites.indexOf(restaurant._id)
 
     if (index == -1) {
-
         classString = "fa fa-star"
-
     } else {
-
         classString = "fa fa-star checked"
-
     }
 
     $('#restaurantDishes').empty();
@@ -265,41 +406,8 @@ async function fillInRestaurantPopup(restaurant){
         setFavouriteCall(restaurant._id)
 
     });
-
-    /*
-        Dentro del for habrá que hacer control de alergenos y añadir class="fas fa-times" (X) o class='fas fa-check' (tick)
-        <i class=''>
-    */ 
-
-    console.log('Restaurant name = ' + restaurant.name)
         
     ingredientsCall(restaurant, 0);
-
-}
-
-function setFavouriteCall(restaurantId) {
-
-    $.ajax({
-        method: "POST",
-        url: herokuUrl+"/user/setFavourite",
-        data:
-            {
-                "email": userData.email,
-                "restaurantId": restaurantId,
-            }
-      }).done(function (newFavs) {
-
-        console.log('New favs length = ' + newFavs.length)
-
-        userData.favourites = newFavs
-
-        favouritesCall()
-
-        alert("Favourites updated");
-
-      }).fail(function (data) {
-          console.log(data);
-      });
 
 }
 
@@ -310,9 +418,7 @@ function fullFavourites(){
     
     for (let i = 0; i < favouritesRes.length; i++) {
 
-        console.log('Favourites = ' + favouritesRes[i].name)
-
-        $('#favouritesRes').append("<button id='acordion"+i+"' class='accordion'>"+favouritesRes[i].name.toUpperCase()+"</button><div id='acordionPanel' class='panel'><p><strong>Calle: </strong>"+favouritesRes[i].address+"</p><p><strong>Telefono: </strong>"+favouritesRes[i].phone+"</p><button id='"+favouritesRes[i].name.replaceAll(" ","_")+"' class='see-dishes-Btn'>Ver carta</button></div>");
+        $('#favouritesRes').append("<button id='acordion"+i+"' class='accordion'>"+favouritesRes[i].name.toUpperCase()+" ("+favouritesRes[i].code+") "+"</button><div id='acordionPanel' class='panel'><p><strong>Calle: </strong>"+favouritesRes[i].address+"</p><p><strong>Telefono: </strong>"+favouritesRes[i].phone+"</p><button id='"+favouritesRes[i].name.replaceAll(" ","_")+"' class='see-dishes-Btn'>Ver carta</button></div>");
 
         popupListener(favouritesRes[i].name.replaceAll(" ","_"), favouritesRes[i]);
 
@@ -343,29 +449,4 @@ function accordionListener(name){
             $(this).removeClass("open");	
         }
     });
-}
-
-function changePassword(){
-
-    email = "amador@gmail.com"
-    password1 = "amador"
-    password2 = "1234"
-
-    $.ajax({
-        method: "POST",
-        url: herokuUrl+"/users/changePassword",
-        data:
-            {
-                "email": email,
-                "password1": password1,
-                "password2": password2
-            }
-      }).done(function (msg) {
-
-          alert("Password Changed");
-
-      }).fail(function (data) {
-          console.log(data);
-      });
-
 }
