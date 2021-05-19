@@ -6,8 +6,8 @@
     }); // end of document ready
 })(jQuery); // end of jQuery name space
 
-const herokuUrl = "https://apilergens.herokuapp.com";
-// const herokuUrl = "http://localhost:5000";
+// const herokuUrl = "https://apilergens.herokuapp.com";
+const herokuUrl = "http://localhost:5000";
 
 function loginSwap(){
     const signUpButton = $('#signUp');
@@ -82,12 +82,7 @@ function regApiCall(user){
                 "dni":user.dni,
                 "phone":user.phone,
                 "password":user.password,
-                "email":user.email,
-                "allergies": [{
-                    "ID": null,
-                    "Type": ""
-                }],
-                "favourites": [null]
+                "email":user.email
             }
         }
       }).done(function (msg) {

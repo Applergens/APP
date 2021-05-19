@@ -17,11 +17,10 @@
 
 // VARIABLES GLOBALES =========================================
 
-const herokuUrl = "https://apilergens.herokuapp.com";
-// const herokuUrl = "http://localhost:5000";
+// const herokuUrl = "https://apilergens.herokuapp.com";
+const herokuUrl = "http://localhost:5000";
 
-var userData = "", favouritesRes = "", ingNames = "", allAllergens = "", selectedAllergens = []
-userAllergens = [];
+userData = "", favouritesRes = "", ingNames = "", allAllergens = ""
 
 // ==============================================================
 
@@ -220,11 +219,9 @@ function setAllergies(){
         data:
             {
                 "email": email,
-                "allergens": selectedAllergens
+                "allergens": userData.allergies
             }
       }).done(function (msg) {
-          userData.allergies = "";
-          userData.allergies = msg;
 
           alert("Alérgenos modificados correctamente");
 
@@ -364,6 +361,7 @@ function fillInChangeAllergens(allergens){
     $('#allergensTable').append("<tr><th>NOMBRE DEL ALÉRGENO</th></tr>");
 
     var i = 0;
+
     allergens.forEach(allergen => {
         $('#allergensTable').append("<tr><td id='"+allergen.name.replaceAll(" ","_")+"'>"+allergen.name+"</td><td><input id='"+allergen._id+"' type='checkbox'></td></tr>");
 
@@ -372,38 +370,44 @@ function fillInChangeAllergens(allergens){
                 $('#'+allergen._id).prop('checked', true);
             }
         });
-    
-        checkboxListener(allergen._id, i);
-        i++;
+
     });
 
     $('#allergensTable').append("<tr><td><button id='saveAllergens' style='margin-bottom:40px;'>GUARDAR ALÉRGENOS</button></td><td></td></tr>");
 
     $('#saveAllergens').on('click', function(){
-        if(selectedAllergens.length == 0){
-            var opcion = confirm("No se ha seleccionado ningun alérgeno, desea dejarlo vacio?");
-            if (opcion == true) {
-                setAllergies();
-            } else {
-                alert("Seleccionar alérgenos");
+
+        userData.allergies = []
+
+        $('#allergensTable :input').each(function() {
+
+            allergen = $(this)
+
+            if (allergen.is(':checked')) {
+
+                userData.allergies.push(allergen.attr("id"))
+
             }
-        } else {
-            setAllergies(selectedAllergens);
+
+        });
+
+        if (userData.allergies.length == 0) {
+
+            opcion = confirm("No se ha seleccionado ningun alérgeno, desea dejarlo vacio?")
+
+            if (opcion == true) {
+
+                setAllergies()
+
+            }
+
+            return
+
         }
+
+        setAllergies()
+
     });
-}
-
-function checkboxListener(id, pos){
-
-    var pos = pos;
-    $('#'+id).on( 'change', function() {
-        if( $(this).is(':checked') ) {
-            selectedAllergens.push(id);
-        } else {
-            selectedAllergens.splice(pos, 1);
-        }
-    });
-
 }
 
 // Fill in function for all popups
@@ -441,7 +445,7 @@ function fillInRestaurantPopup(restaurant){
 
 // Fill in function for favourites restaurants div
 function fullFavourites(){
-    console.log(favouritesRes);
+
     if(favouritesRes != null){
         $('#favouritesRes').empty()
     
