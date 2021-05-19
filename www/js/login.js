@@ -6,8 +6,8 @@
     }); // end of document ready
 })(jQuery); // end of jQuery name space
 
-// const herokuUrl = "https://apilergens.herokuapp.com";
-const herokuUrl = "http://localhost:5000";
+const herokuUrl = "https://apilergens.herokuapp.com";
+// const herokuUrl = "http://localhost:5000";
 
 function loginSwap(){
     const signUpButton = $('#signUp');
