@@ -52,7 +52,6 @@ function allergensCall(){
         dataType: "json"
       }).done(function (allergens) {
         allAllergens = allergens;
-        fillInChangeAllergens(allAllergens);
       }).fail(function (data) {
           alert("Error al encontrar alérgenos");
       });
@@ -331,7 +330,7 @@ function popupProfileListener(openBtn){
     btnOpenPopup.on("click", function(){
         overlay.addClass('active');
         popup.addClass('active');
-        if(openBtn=="btnPassword"){fillInChangePassword();} else {fillInChangeAllergens();}
+        if(openBtn=="btnPassword"){fillInChangePassword();} else {fillInChangeAllergens(allAllergens);}
     });
 
     btnClosePopup.on("click", function(){
@@ -358,17 +357,24 @@ function fillInChangePassword(){
 
 function fillInChangeAllergens(allergens){
 
+    $('#allergensTable').empty();
     $('#allergensTable').append("<tr><th>NOMBRE DEL ALÉRGENO</th></tr>");
 
     var i = 0;
     allergens.forEach(allergen => {
         $('#allergensTable').append("<tr><td id='"+allergen.name.replaceAll(" ","_")+"'>"+allergen.name+"</td><td><input id='"+allergen._id+"' type='checkbox'></td></tr>");
+
+        userData.allergies.forEach(userAllergen =>{
+            if(userAllergen == allergen._id){
+                $('#'+allergen._id).prop('checked', true);
+            }
+        });
     
         checkboxListener(allergen._id, i);
         i++;
     });
 
-    $('#allergensTable').append("<tr><td><button id='saveAllergens' style='margin-bottom:20px;'>GUARDAR ALÉRGENOS</button></td><td></td></tr>");
+    $('#allergensTable').append("<tr><td><button id='saveAllergens' style='margin-bottom:40px;'>GUARDAR ALÉRGENOS</button></td><td></td></tr>");
 
     $('#saveAllergens').on('click', function(){
         if(selectedAllergens.length == 0){
