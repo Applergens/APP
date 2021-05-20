@@ -17,8 +17,8 @@
 
 // VARIABLES GLOBALES =========================================
 
-// const herokuUrl = "https://apilergens.herokuapp.com";
-const herokuUrl = "http://localhost:5000";
+const herokuUrl = "https://apilergens.herokuapp.com";
+// const herokuUrl = "http://localhost:5000";
 
 userData = "", favouritesRes = "", ingNames = "", allAllergens = ""
 
@@ -68,6 +68,7 @@ function favouritesCall(){
                 "favourites":userData.favourites
             }
         }).done(function (favs) {
+
             favouritesRes = favs;
             fullFavourites();
         }).fail(function (data) {
@@ -448,8 +449,12 @@ function fullFavourites(){
 
     if(favouritesRes != null){
         $('#favouritesRes').empty()
+
+        console.log('Restaurants num = ' + favouritesRes.length)
     
         for (let i = 0; i < favouritesRes.length; i++) {
+
+            console.log(favouritesRes[i])
     
             $('#favouritesRes').append("<button id='acordion"+i+"' class='accordion'>"+favouritesRes[i].name.toUpperCase()+" ("+favouritesRes[i].code+") "+"</button><div id='acordionPanel' class='panel'><p><strong>Calle: </strong>"+favouritesRes[i].address+"</p><p><strong>Telefono: </strong>"+favouritesRes[i].phone+"</p><button id='"+favouritesRes[i].name.replaceAll(" ","_")+"' class='see-dishes-Btn'>Ver carta</button></div>");
     
