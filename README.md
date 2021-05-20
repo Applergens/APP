@@ -25,6 +25,6 @@ cordova run android --device
 ```
 _Finalmente se nos abrirá la aplicación en nuestro movil y podremos hacer uso de la misma sin cable._
 ##LINK DE DESCARGA DEL APK
-```
-https://drive.google.com/file/d/1PaBqRHFc6HjDKqJI9F346rmPQq9cmfvI/view?usp=sharing
-```
+
+_https://drive.google.com/file/d/1PaBqRHFc6HjDKqJI9F346rmPQq9cmfvI/view?usp=sharing_
+
