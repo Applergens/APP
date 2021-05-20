@@ -24,3 +24,7 @@ _Con el movil conectado por cable al ordenador, ejecutar:_
 cordova run android --device
 ```
 _Finalmente se nos abrirá la aplicación en nuestro movil y podremos hacer uso de la misma sin cable._
+##LINK DE DESCARGA DEL APK
+
+_https://drive.google.com/u/0/uc?id=1PaBqRHFc6HjDKqJI9F346rmPQq9cmfvI&export=download_
+
